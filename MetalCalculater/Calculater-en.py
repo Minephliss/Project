@@ -10,17 +10,12 @@ class Metal:
 
 
 # ===============================================================================================
-metalSerialNumber = []
 kindOfMetal = 0
-metalList = []
-targetQuantity = 0.0
-total = 0.0
 globalJudge = False
-targetName = ""
-version = '1.0.2'
-date = '11/22/2020'
-inventory = 0.0
-maxQuantity = 0.0
+metalSerialNumber = []
+metalList = []
+targetQuantity = total = inventory = maxQuantity = 0.0
+version, date, targetName = '1.0.3', '11/23/2020', ''
 # ===============================================================================================
 
 
@@ -56,8 +51,7 @@ def printAnswer():
     if globalJudge:
         print("The best idea is:\n")
         for i in metalList:
-            print("{}: {} Percent:{:.2f}%".format(
-                i.name, i.used, i.used * i.content / total * 100))
+            print("{}: {} Percent:{:.2f}%".format(i.name, i.used, i.used * i.content / total * 100))
         print("\nYou can get {} {} in total.".format(int(total), targetName))
     else:
         print("That is impossible!")
@@ -69,7 +63,7 @@ def calculate():
     while(contu):
         enumerate(0)
         printAnswer()
-        if input('Other quantity?(Y/N)') == 'N':
+        if input('Other quantity?(y/n)') == 'n':
             contu = False
         else:
             targetQuantity = float(input("Now you have {:.2f} in total and maybe can produce {:.2f} at most, how much do you want to produce:".format(inventory, maxQuantity)))
@@ -88,14 +82,15 @@ def inputInformation():
         metal = Metal(lst)
         inventory += (metal.content * metal.quantity)
         metalList.append(metal)
-    maxQuantity = min(
-        inventory, metalList[0].content * metalList[0].quantity / metalList[0].lowerLimit)
+    maxQuantity = min(inventory, metalList[0].content * metalList[0].quantity / metalList[0].lowerLimit)
     targetQuantity = float(input("Now you have {:.2f} in total and maybe can produce {:.2f} at most, how much do you want to produce:".format(inventory, maxQuantity)))
 
 
 def enumerate(key):
-    global metalSerialNumber, globalJudge, total
-    for i in range(1, int(metalList[key].quantity) + 1):
+    global metalSerialNumber, globalJudge, total, inventory
+    startQuantity = max(1, int(targetQuantity * metalList[key].lowerLimit / metalList[key].content))
+    lastQtuantity = min(int(metalList[key].quantity), int(inventory * metalList[key].upperLimit / metalList[key].content))
+    for i in range(startQuantity, lastQtuantity + 1):
         metalSerialNumber.append(i)
         if key != kindOfMetal - 1:
             enumerate(key + 1)
